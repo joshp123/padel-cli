@@ -1,0 +1,15 @@
+# Credentials - never commit
+auth.toml
+credentials.json
+
+# Build artifacts
+/padel
+*.exe
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
