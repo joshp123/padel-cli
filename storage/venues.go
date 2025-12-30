@@ -20,7 +20,7 @@ type VenuesFile struct {
 	Venues []Venue `json:"venues"`
 }
 
-const DefaultVenueTimezone = "Europe/Amsterdam"
+const DefaultVenueTimezone = "Europe/Madrid"
 
 func LoadVenues() ([]Venue, error) {
 	path, err := VenuesPath()
