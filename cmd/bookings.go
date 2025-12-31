@@ -104,11 +104,15 @@ func bookingsListCmd() *cobra.Command {
 
 			writer := tabwriter.NewWriter(os.Stdout, 2, 2, 2, ' ', 0)
 			if !outputCompact {
-				fmt.Fprintln(writer, "DATE\tTIME\tVENUE\tCOURT\tPRICE")
+				fmt.Fprintln(writer, "DAY\tDATE\tTIME\tVENUE\tCOURT\tPRICE")
 			}
 			for _, booking := range bookings {
 				price := formatEUR(booking.Price)
-				fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\n", booking.Date, booking.Time, booking.VenueName, booking.Court, price)
+				day := ""
+				if parsed, err := time.Parse("2006-01-02", booking.Date); err == nil {
+					day = parsed.Weekday().String()[:3]
+				}
+				fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\n", day, booking.Date, booking.Time, booking.VenueName, booking.Court, price)
 			}
 			return writer.Flush()
 		},
