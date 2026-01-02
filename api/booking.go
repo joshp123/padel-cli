@@ -118,3 +118,17 @@ func (c *Client) GetMatches(ctx context.Context, size int, sort string, ownerID 
 	}
 	return matches, nil
 }
+
+func (c *Client) GetMatchDetails(ctx context.Context, matchID string) (MatchDetails, error) {
+	path := "/matches/" + url.PathEscape(matchID)
+	req, err := c.newAPIRequest(ctx, "GET", path, nil)
+	if err != nil {
+		return MatchDetails{}, err
+	}
+
+	var details MatchDetails
+	if err := c.doJSON(req, &details); err != nil {
+		return MatchDetails{}, err
+	}
+	return details, nil
+}
