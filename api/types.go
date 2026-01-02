@@ -60,3 +60,51 @@ type Match struct {
 	CreatedAt    string `json:"created_at"`
 	Tenant       Tenant `json:"tenant"`
 }
+
+// MatchDetails contains full match info including players
+type MatchDetails struct {
+	MatchID          string             `json:"match_id"`
+	Location         string             `json:"location"`
+	SportID          string             `json:"sport_id"`
+	Teams            []Team             `json:"teams"`
+	OwnerID          string             `json:"owner_id"`
+	Status           string             `json:"status"`
+	StartDate        string             `json:"start_date"`
+	EndDate          string             `json:"end_date"`
+	ResourceName     string             `json:"resource_name"`
+	ResourceID       string             `json:"resource_id"`
+	Price            string             `json:"price"`
+	Tenant           Tenant             `json:"tenant"`
+	RegistrationInfo RegistrationInfo   `json:"registration_info"`
+	IsBooked         bool               `json:"is_booked"`
+	CreatedAt        string             `json:"created_at"`
+}
+
+type Team struct {
+	TeamID     string   `json:"team_id"`
+	Players    []Player `json:"players"`
+	MinPlayers int      `json:"min_players"`
+	MaxPlayers int      `json:"max_players"`
+}
+
+type Player struct {
+	Name            string  `json:"name"`
+	UserID          string  `json:"user_id"`
+	Gender          string  `json:"gender"`
+	LevelValue      float64 `json:"level_value"`
+	LevelConfidence float64 `json:"level_confidence"`
+	IsPremium       bool    `json:"is_premium"`
+}
+
+type RegistrationInfo struct {
+	PaymentType   string         `json:"payment_type"`
+	Registrations []Registration `json:"registrations"`
+	PaymentStatus string         `json:"payments_status"`
+}
+
+type Registration struct {
+	UserID           string `json:"user_id"`
+	RegistrationDate string `json:"registration_date"`
+	PaymentDate      string `json:"payment_date"`
+	PaymentPrice     string `json:"payment_price"`
+}

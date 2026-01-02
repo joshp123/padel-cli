@@ -30,6 +30,7 @@ func bookingsCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(bookingsListCmd())
+	cmd.AddCommand(bookingsShowCmd())
 	cmd.AddCommand(bookingsAddCmd())
 	cmd.AddCommand(bookingsRemoveCmd())
 	cmd.AddCommand(bookingsStatsCmd())
@@ -125,6 +126,134 @@ func bookingsListCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&past, "past", false, "List past bookings")
 	cmd.Flags().StringVar(&from, "from", "", "Start date (YYYY-MM-DD)")
 	cmd.Flags().StringVar(&to, "to", "", "End date (YYYY-MM-DD)")
+	return cmd
+}
+
+func bookingsShowCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "show [match-id]",
+		Short: "Show booking details including players",
+		Long:  "Show detailed booking info including who has accepted the invite",
+		Args:  cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Get credentials
+			creds, err := storage.LoadCredentials()
+			if err != nil {
+				return err
+			}
+			if creds == nil || creds.AccessToken == "" {
+				return fmt.Errorf("not logged in. Run 'padel auth login' first")
+			}
+
+			// Try to refresh token if expired
+			if creds.AccessTokenExpired(time.Now()) {
+				ctx := context.Background()
+				newCreds, err := client.RefreshToken(ctx, creds.RefreshToken)
+				if err != nil {
+					return fmt.Errorf("token expired and refresh failed: %v. Run 'padel auth login'", err)
+				}
+				creds.AccessToken = newCreds.AccessToken
+				creds.AccessTokenExpiration = newCreds.AccessTokenExpiration
+				creds.RefreshToken = newCreds.RefreshToken
+				creds.RefreshTokenExpiration = newCreds.RefreshTokenExpiration
+				if err := storage.SaveCredentials(creds); err != nil {
+					return fmt.Errorf("failed to save refreshed credentials: %v", err)
+				}
+			}
+			client.AccessToken = creds.AccessToken
+
+			// Find match ID
+			var matchID string
+			if len(args) > 0 {
+				matchID = args[0]
+			} else {
+				// Get the next upcoming booking
+				db, err := storage.OpenBookingsDB()
+				if err != nil {
+					return err
+				}
+				defer db.Close()
+
+				now := time.Now()
+				filter := storage.BookingFilter{
+					NowDate:  now.Format("2006-01-02"),
+					NowTime:  now.Format("15:04"),
+					Upcoming: true,
+				}
+				bookings, err := storage.ListBookings(db, filter)
+				if err != nil {
+					return err
+				}
+				if len(bookings) == 0 {
+					return fmt.Errorf("no upcoming bookings found")
+				}
+				if bookings[0].Source != "playtomic_sync" {
+					return fmt.Errorf("next booking was added manually, not synced from Playtomic")
+				}
+				matchID = bookings[0].ID
+			}
+
+			// Fetch match details
+			ctx := context.Background()
+			details, err := client.GetMatchDetails(ctx, matchID)
+			if err != nil {
+				return fmt.Errorf("failed to get match details: %v", err)
+			}
+
+			if outputJSON {
+				return writeJSON(details)
+			}
+
+			// Count players
+			totalPlayers := 0
+			maxPlayers := 0
+			var playerNames []string
+			for _, team := range details.Teams {
+				for _, player := range team.Players {
+					totalPlayers++
+					name := player.Name
+					if player.UserID == details.OwnerID {
+						name += "*"
+					}
+					playerNames = append(playerNames, name)
+				}
+				maxPlayers += team.MaxPlayers
+			}
+
+			if outputCompact {
+				// Compact: "3/4: Josh*, Marcos, Martijn"
+				fmt.Printf("%d/%d: %s\n", totalPlayers, maxPlayers, strings.Join(playerNames, ", "))
+				return nil
+			}
+
+			// Normal output
+			fmt.Printf("Match: %s\n", details.MatchID)
+			fmt.Printf("Venue: %s\n", details.Location)
+			fmt.Printf("Court: %s\n", details.ResourceName)
+			fmt.Printf("Date: %s\n", details.StartDate)
+			fmt.Printf("Price: %s\n", details.Price)
+			fmt.Printf("Status: %s\n", details.Status)
+			fmt.Println()
+
+			fmt.Printf("Players (%d/%d):\n", totalPlayers, maxPlayers)
+			for _, team := range details.Teams {
+				for _, player := range team.Players {
+					owner := ""
+					if player.UserID == details.OwnerID {
+						owner = " (organizer)"
+					}
+					fmt.Printf("  - %s%s\n", player.Name, owner)
+				}
+			}
+
+			if totalPlayers < maxPlayers {
+				fmt.Printf("  - (%d empty slots)\n", maxPlayers-totalPlayers)
+			}
+
+			return nil
+		},
+	}
+
 	return cmd
 }
 

@@ -41,3 +41,29 @@ func (c *Client) Login(ctx context.Context, email, password string) (AuthRespons
 	c.AccessToken = resp.AccessToken
 	return resp, nil
 }
+
+func (c *Client) RefreshToken(ctx context.Context, refreshToken string) (AuthResponse, error) {
+	payload := map[string]string{
+		"refresh_token": refreshToken,
+	}
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return AuthResponse{}, err
+	}
+
+	req, err := c.newRequest(ctx, c.AuthBaseURL, "POST", "/auth/token", nil, bytes.NewReader(body), false)
+	if err != nil {
+		return AuthResponse{}, err
+	}
+
+	var resp AuthResponse
+	if err := c.doJSON(req, &resp); err != nil {
+		return AuthResponse{}, err
+	}
+	if resp.AccessToken == "" {
+		return AuthResponse{}, fmt.Errorf("token refresh failed: missing access_token")
+	}
+
+	c.AccessToken = resp.AccessToken
+	return resp, nil
+}
