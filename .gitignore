@@ -13,3 +13,7 @@ credentials.json
 
 # OS
 .DS_Store
+
+# Nix
+result
+.direnv
