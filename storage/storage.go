@@ -10,9 +10,17 @@ const (
 	venuesFile   = "venues.json"
 	bookingsFile = "bookings.db"
 	credsFile    = "credentials.json"
+
+	configDirEnv = "PADEL_CONFIG_DIR"
 )
 
 func ConfigDir() (string, error) {
+	if dir := os.Getenv(configDirEnv); dir != "" {
+		return dir, nil
+	}
+	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
+		return filepath.Join(xdg, "padel"), nil
+	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err

@@ -115,6 +115,12 @@ Config stored in `~/.config/padel/`:
 └── bookings.db          # SQLite booking history
 ```
 
+Environment overrides:
+
+- `PADEL_CONFIG_DIR`: override the config directory (defaults to `~/.config/padel`)
+- `XDG_CONFIG_HOME`: used if set and `PADEL_CONFIG_DIR` is not set
+- `PADEL_AUTH_FILE`: default for `padel auth login --auth-file`
+
 Example config.json:
 
 ```json

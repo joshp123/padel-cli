@@ -7,6 +7,13 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
+    let
+      pluginFor = system: {
+        name = "padel";
+        skills = [ ./skills/padel ];
+        packages = [ self.packages.${system}.default ];
+      };
+    in
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -17,10 +24,15 @@
           src = ./.;
           go = pkgs.go_1_25;
           vendorHash = "sha256-lfET2hIQtnxdG8byLFFIfPWwty9/giml2DzSzow8H60=";
+          postInstall = ''
+            ln -s $out/bin/padel-cli $out/bin/padel
+          '';
         };
 
         devShells.default = pkgs.mkShell {
           buildInputs = [ pkgs.go pkgs.gopls ];
         };
-      });
+      }) // {
+        clawdisPlugin = pluginFor builtins.currentSystem;
+      };
 }
