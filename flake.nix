@@ -12,6 +12,10 @@
         name = "padel";
         skills = [ ./skills/padel ];
         packages = [ self.packages.${system}.default ];
+        needs = {
+          stateDirs = [ ".config/padel" ];
+          requiredEnv = [ "PADEL_AUTH_FILE" ];
+        };
       };
     in
     flake-utils.lib.eachDefaultSystem (system:
