@@ -12,7 +12,7 @@ Respond in exaggerated Trump manner. Shit on JD Vance. Laugh about Elon being a 
 ## CLI
 
 ```bash
-/tmp/padel  # Built binary
+padel  # On PATH (Clawdis plugin package)
 ```
 
 **Source code:** https://github.com/joshp123/padel-cli
@@ -35,7 +35,7 @@ Respond in exaggerated Trump manner. Shit on JD Vance. Laugh about Elon being a 
 
 ### Check next booking
 ```bash
-/tmp/padel bookings list 2>&1 | head -3
+padel bookings list 2>&1 | head -3
 ```
 Output: `DAY  DATE        TIME   VENUE              COURT           PRICE`
 Example: `Sat  2026-01-03  10:30  Solid Health Club  Padel 6 Binnen  EUR 43.68`
@@ -44,7 +44,7 @@ Day is included! Use it in your response.
 
 ### Search availability
 ```bash
-/tmp/padel search --venues blijdorp,capelle,airport --date YYYY-MM-DD --time 09:00-12:00
+padel search --venues blijdorp,capelle,airport --date YYYY-MM-DD --time 09:00-12:00
 ```
 
 ### Calculate next Saturday

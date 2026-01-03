@@ -30,6 +30,7 @@ func authLoginCmd() *cobra.Command {
 	var email string
 	var password string
 	var authFile string
+	authFileDefault := os.Getenv("PADEL_AUTH_FILE")
 
 	cmd := &cobra.Command{
 		Use:   "login",
@@ -95,7 +96,7 @@ func authLoginCmd() *cobra.Command {
 
 	cmd.Flags().StringVar(&email, "email", "", "Email address")
 	cmd.Flags().StringVar(&password, "password", "", "Password")
-	cmd.Flags().StringVar(&authFile, "auth-file", "", "Load credentials from file")
+	cmd.Flags().StringVar(&authFile, "auth-file", authFileDefault, "Load credentials from file (default: $PADEL_AUTH_FILE)")
 	return cmd
 }
 
