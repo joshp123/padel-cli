@@ -8,6 +8,14 @@ CLI tool for checking Playtomic padel court availability and booking.
 go build -o padel
 ```
 
+## Nix
+
+```bash
+# Build with Nix flakes
+nix build
+./result/bin/padel-cli --help
+```
+
 ## Usage
 
 ```bash
