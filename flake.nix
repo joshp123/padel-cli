@@ -37,6 +37,6 @@
           buildInputs = [ pkgs.go pkgs.gopls ];
         };
       }) // {
-        clawdisPlugin = pluginFor builtins.currentSystem;
+        clawdbotPlugin = pluginFor builtins.currentSystem;
       };
 }

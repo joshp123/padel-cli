@@ -16,6 +16,12 @@ nix build
 ./result/bin/padel-cli --help
 ```
 
+## Clawdbot Plugin
+
+This repo exports a `clawdbotPlugin` flake output for nix-clawdbot. nix-clawdbot
+symlinks skills into `~/.clawdbot/skills/<plugin>/<skill>` and adds the plugin
+packages to `PATH`, so no `skillsLoad.extraDirs` is needed.
+
 ## Usage
 
 ```bash
