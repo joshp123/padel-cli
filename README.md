@@ -16,11 +16,11 @@ nix build
 ./result/bin/padel-cli --help
 ```
 
-## Clawdbot Plugin
+## Openclaw Plugin
 
-This repo exports a `clawdbotPlugin` flake output for nix-clawdbot. nix-clawdbot
-symlinks skills into `~/.clawdbot/skills/<plugin>/<skill>` and adds the plugin
-packages to `PATH`, so no `skillsLoad.extraDirs` is needed.
+This repo exports an `openclawPlugin` flake output for nix-openclaw. nix-openclaw
+symlinks skills into `~/.openclaw/workspace/skills/<skill>` and adds the plugin
+packages to `PATH`, so no `skills.load.extraDirs` is needed.
 
 ## Usage
 

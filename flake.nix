@@ -7,17 +7,6 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    let
-      pluginFor = system: {
-        name = "padel";
-        skills = [ ./skills/padel ];
-        packages = [ self.packages.${system}.default ];
-        needs = {
-          stateDirs = [ ".config/padel" ];
-          requiredEnv = [ "PADEL_AUTH_FILE" ];
-        };
-      };
-    in
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -36,7 +25,19 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [ pkgs.go pkgs.gopls ];
         };
-      }) // {
-        clawdbotPlugin = pluginFor builtins.currentSystem;
+      }
+    ) // {
+      # Top-level openclawPlugin for nix-openclaw
+      openclawPlugin = let
+        system = builtins.currentSystem;
+      in {
+        name = "padel";
+        skills = [ ./skills/padel ];
+        packages = [ self.packages.${system}.default ];
+        needs = {
+          stateDirs = [ ".config/padel" ];
+          requiredEnv = [ "PADEL_AUTH_FILE" ];
+        };
       };
+    };
 }
