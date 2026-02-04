@@ -1,6 +1,6 @@
 # AGENTS.md — padel-cli
 
-This file describes the Clawdis plugin knobs and how agents should obtain the
+This file describes the Openclaw plugin knobs and how agents should obtain the
 values. It is written for automation agents, not end users.
 
 ## Plugin knobs (values)
