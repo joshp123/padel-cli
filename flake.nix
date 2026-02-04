@@ -28,9 +28,7 @@
       }
     ) // {
       # Top-level openclawPlugin for nix-openclaw
-      openclawPlugin = let
-        system = builtins.currentSystem;
-      in {
+      openclawPlugin = system: {
         name = "padel";
         skills = [ ./skills/padel ];
         packages = [ self.packages.${system}.default ];
