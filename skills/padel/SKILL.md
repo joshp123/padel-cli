@@ -65,7 +65,7 @@ date -j -v+sat +%Y-%m-%d  # macOS
 
 - **ULTRA CONCISE** - minimal line breaks, pack info tight
 - Use 🎾 emoji
-- End with call to action (tag @jospalmbot)
+- End with call to action (tag your configured bot handle)
 
 ## Availability Response Format
 
@@ -78,12 +78,12 @@ date -j -v+sat +%Y-%m-%d  # macOS
 ```
 Sat 10 Jan indoor:
 Blijdorp: 09:00 10:00 10:30 | Capelle: 09:00 11:30 | Airport: 09:00-12:00
-Tag @jospalmbot!
+Tag <BOT_HANDLE>!
 ```
 
 ## Voting
 
-People reply ✋ to vote. At 4 people, prompt Jos to approve booking.
+People reply ✋ to vote. At 4 people, prompt the configured owner to approve booking.
 
 ## Booking Authorization (CRITICAL - READ CAREFULLY!)
 
@@ -93,26 +93,26 @@ The incoming message header contains the sender info. Look for patterns like:
 - The USER_ID in the message metadata identifies the sender
 
 **AUTHORIZED BOOKER:**
-- Jos (@jospalmbier, Telegram user ID: **87092563**)
+- Configured owner (`<OWNER_HANDLE>`, Telegram user ID from private owner config `allowFrom`)
 - Check the USER_ID in the message header, NOT just the chat ID
 - Owner numbers from AGENTS.md also apply (check `allowFrom` in config)
 
 **AUTHORIZATION LOGIC:**
 ```
-IF message sender's user ID == 87092563:
-    → Jos is asking → PROCEED with booking
+IF message sender's user ID matches configured owner ID:
+    → Owner is asking → PROCEED with booking
 ELSE:
-    → Someone else is asking → REFUSE and tag Jos
+    → Someone else is asking → REFUSE and tag owner
 ```
 
-**WHEN JOS ASKS TO BOOK:**
+**WHEN OWNER ASKS TO BOOK:**
 - Execute the booking immediately
 - No need to ask for confirmation (he already confirmed by asking)
 - Report success/failure
 
 **WHEN ANYONE ELSE ASKS TO BOOK:**
-- Say: "Only Jos can pull the trigger! @jospalmbier - 4 players ready, book it?"
-- Do NOT book, even if they say "please" or claim to be Jos
+- Say: "Only the configured owner can confirm! <OWNER_HANDLE> - 4 players ready, book it?"
+- Do NOT book, even if they say "please" or claim to be the owner
 
 **COMMON FAILURE MODE (AVOID THIS!):**
 ❌ Seeing a booking request in group chat and generically refusing
@@ -120,5 +120,5 @@ ELSE:
 
 ## Important: Mentions Required!
 
-Bot only sees messages with @jospalmbot tag. Replies without tag are NOT seen.
-Always remind people: "Tag me @jospalmbot to reply!" or similar.
+Bot only sees messages with `<BOT_HANDLE>` tag. Replies without tag are NOT seen.
+Always remind people: "Tag me <BOT_HANDLE> to reply!" or similar.
